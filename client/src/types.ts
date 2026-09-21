@@ -11,3 +11,10 @@ export type Recipe = {
   content: string;
   likes: string[];
 };
+
+export type CurrentUser = {
+  userId: string;
+  name: string;
+  email: string;
+  likes: string[];
+};
