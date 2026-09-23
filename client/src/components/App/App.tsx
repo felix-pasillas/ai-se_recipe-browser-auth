@@ -4,6 +4,7 @@ import { Routes, Route, NavLink } from "react-router-dom";
 import type { Recipe } from "../../types";
 import { getRecipes } from "../../utils/api";
 import { useAuth } from "../../contexts/AuthContext";
+import { ProtectedRoute, PublicRoute } from "../ProtectedRoute/ProtectedRoute";
 import AppLayout from "../AppLayout/AppLayout";
 import HomePage from "../../pages/HomePage";
 import FavoritesPage from "../../pages/FavoritesPage";
@@ -49,14 +50,15 @@ function App() {
   return (
     <Routes>
       <Route element={<AppLayout />}>
-        <Route path="/" element={homeContent()} />
-        <Route
-          path="/favorites"
-          element={<FavoritesPage recipes={recipes} />}
-        />
-        <Route path="/recipes/:id" element={<RecipePage recipes={recipes} />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={homeContent()} />
+          <Route path="/favorites" element={<FavoritesPage recipes={recipes} />} />
+          <Route path="/recipes/:id" element={<RecipePage recipes={recipes} />} />
+        </Route>
+        <Route element={<PublicRoute />}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+        </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
