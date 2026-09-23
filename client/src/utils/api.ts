@@ -3,10 +3,12 @@ import type { Recipe, CurrentUser } from '../types';
 const BASE_URL = 'http://localhost:3001';
 
 function request<T>(url: string, options: RequestInit = {}): Promise<T> {
+  const token = localStorage.getItem("auth-token") ?? "";
   return fetch(url, {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
       ...options.headers,
     },
   })
