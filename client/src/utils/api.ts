@@ -1,4 +1,4 @@
-import type { Recipe } from '../types';
+import type { Recipe, CurrentUser } from '../types';
 
 const BASE_URL = 'http://localhost:3001';
 
@@ -29,4 +29,25 @@ export function getRecipe(id: string): Promise<Recipe> {
 
 export function toggleLike(id: string): Promise<Recipe> {
   return request<Recipe>(`${BASE_URL}/recipes/${id}/likes`, { method: 'PUT' });
+}
+
+export function loginUser(
+  email: string,
+  password: string,
+): Promise<{ token: string; user: CurrentUser }> {
+  return request(`${BASE_URL}/auth/login`, {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
+}
+
+export function registerUser(
+  name: string,
+  email: string,
+  password: string,
+): Promise<{ user: CurrentUser }> {
+  return request(`/auth/register`, {
+    method: 'POST',
+    body: JSON.stringify({ name, email, password }),
+  });
 }

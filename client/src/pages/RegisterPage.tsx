@@ -1,12 +1,23 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import { useFormWithValidation } from '../hooks/useFormWithValidation';
+import { registerUser } from '../utils/api';
 
 export default function RegisterPage() {
   const { values, errors, isValid, handleChange } = useFormWithValidation();
+  const [submitError, setSubmitError] = useState('');
+  const navigate = useNavigate();
 
-  function handleSubmit(event: React.FormEvent) {
+  async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     if (!isValid) return;
-    // submit logic will be added later
+    try {
+      await registerUser(values.name, values.email, values.password);
+      navigate('/login');
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Something went wrong');
+    }
   }
 
   return (
@@ -66,6 +77,7 @@ export default function RegisterPage() {
       >
         Register
       </button>
+      {submitError && <p className="form__error">{submitError}</p>}
     </form>
   );
 }
