@@ -48,8 +48,12 @@ export function registerUser(
   email: string,
   password: string,
 ): Promise<{ user: CurrentUser }> {
-  return request(`/auth/register`, {
+  return request(`${BASE_URL}/auth/register`, {
     method: 'POST',
     body: JSON.stringify({ name, email, password }),
   });
+}
+
+export function getCurrentUser(): Promise<CurrentUser> {
+  return request<CurrentUser>(`${BASE_URL}/users/me`);
 }
