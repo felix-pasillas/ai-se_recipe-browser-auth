@@ -4,14 +4,15 @@ import "./RecipeList.css";
 
 type Props = {
   recipes: Recipe[];
+  onToggleLike: (id: string) => void;
 };
 
-function RecipeList({ recipes }: Props) {
+function RecipeList({ recipes, onToggleLike }: Props) {
   return (
     <ul className="recipe-list">
       {recipes.map((recipe) => (
         <li key={recipe.id} className="recipe-list__item">
-          <RecipeCard recipe={recipe} />
+          <RecipeCard recipe={recipe} onToggleLike={onToggleLike} />
         </li>
       ))}
     </ul>

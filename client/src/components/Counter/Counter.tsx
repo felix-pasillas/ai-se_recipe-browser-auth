@@ -1,9 +1,8 @@
-import { useContext } from "react";
-import { FavoritesContext } from "../../contexts/FavoritesContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 function Counter() {
-  const { favorites } = useContext(FavoritesContext);
-  return <span className="header__count">({favorites.size})</span>;
+  const { currentUser } = useAuth();
+  return <span className="header__count">({currentUser?.likes.length ?? 0})</span>;
 }
 
 export default Counter;

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Routes, Route, NavLink } from "react-router-dom";
 
 import type { Recipe } from "../../types";
-import { getRecipes } from "../../utils/api";
+import { getRecipes, toggleLike } from "../../utils/api";
 import { useAuth } from "../../contexts/AuthContext";
 import { ProtectedRoute, PublicRoute } from "../ProtectedRoute/ProtectedRoute";
 import AppLayout from "../AppLayout/AppLayout";
@@ -18,7 +18,7 @@ function App() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, currentUser, updateLikes } = useAuth();
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -35,6 +35,18 @@ function App() {
       });
   }, [isAuthenticated]);
 
+  async function handleToggleLike(id: string) {
+    try {
+      const updatedRecipe = await toggleLike(id);
+      setRecipes((prev) => prev.map((r) => (r.id === id ? updatedRecipe : r)));
+      const isNowLiked = updatedRecipe.likes.includes(currentUser!.userId);
+      const prevLikes = currentUser?.likes ?? [];
+      updateLikes(isNowLiked ? [...prevLikes, id] : prevLikes.filter((likeId) => likeId !== id));
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   /** Renders loading/error in the home route rather than returning early, keeping other routes reachable. */
   function homeContent() {
     if (isLoading) return <p className="app__loading">Loading...</p>;
@@ -44,7 +56,7 @@ function App() {
     if (error) {
       return <p className="app__message">Something went wrong loading recipes.</p>;
     }
-    return <HomePage recipes={recipes} />;
+    return <HomePage recipes={recipes} onToggleLike={handleToggleLike} />;
   }
 
   return (
@@ -52,7 +64,7 @@ function App() {
       <Route element={<AppLayout />}>
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={homeContent()} />
-          <Route path="/favorites" element={<FavoritesPage recipes={recipes} />} />
+          <Route path="/favorites" element={<FavoritesPage recipes={recipes} onToggleLike={handleToggleLike} />} />
           <Route path="/recipes/:id" element={<RecipePage recipes={recipes} />} />
         </Route>
         <Route element={<PublicRoute />}>

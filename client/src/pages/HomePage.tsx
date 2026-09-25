@@ -5,9 +5,10 @@ import RecipeList from "../components/RecipeList/RecipeList";
 
 type Props = {
   recipes: Recipe[];
+  onToggleLike: (id: string) => void;
 };
 
-function HomePage({ recipes }: Props) {
+function HomePage({ recipes, onToggleLike }: Props) {
   const [query, setQuery] = useState("");
 
   const filteredRecipes = recipes.filter((recipe) =>
@@ -24,7 +25,7 @@ function HomePage({ recipes }: Props) {
         onChange={(e) => setQuery(e.target.value)}
       />
       <h1 className="app__heading">Recipes</h1>
-      <RecipeList recipes={filteredRecipes} />
+      <RecipeList recipes={filteredRecipes} onToggleLike={onToggleLike} />
     </div>
   );
 }

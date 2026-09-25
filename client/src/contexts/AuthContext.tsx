@@ -10,6 +10,7 @@ type AuthContextValue = {
   isLoading: boolean;
   login: (token: string, user: CurrentUser) => void;
   logout: () => void;
+  updateLikes: (likes: string[]) => void;
 };
 
 export const AuthContext = createContext<AuthContextValue>({
@@ -18,6 +19,7 @@ export const AuthContext = createContext<AuthContextValue>({
   isLoading: false,
   login: () => {},
   logout: () => {},
+  updateLikes: () => {},
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -56,7 +58,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setCurrentUser(null);
   }
 
-  const value = { currentUser, isAuthenticated, isLoading, login, logout };
+  function updateLikes(likes: string[]) {
+    setCurrentUser((prev) => (prev ? { ...prev, likes } : prev));
+  }
+
+  const value = { currentUser, isAuthenticated, isLoading, login, logout, updateLikes };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

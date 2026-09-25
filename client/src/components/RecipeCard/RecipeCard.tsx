@@ -2,17 +2,18 @@ import { useNavigate } from 'react-router';
 
 import type { Recipe } from '../../types';
 import { categoryColors } from '../../data/recipes';
-import { useFavorites } from '../../contexts/FavoritesContext';
+import { useAuth } from '../../contexts/AuthContext';
 import './RecipeCard.css';
 
 type Props = {
   recipe: Recipe;
+  onToggleLike: (id: string) => void;
 };
 
-function RecipeCard({ recipe }: Props) {
+function RecipeCard({ recipe, onToggleLike }: Props) {
   const navigate = useNavigate();
-  const { favorites, onToggleFavorite } = useFavorites();
-  const isFavorited = favorites.has(recipe.id);
+  const { currentUser } = useAuth();
+  const isLiked = currentUser?.likes.includes(recipe.id) ?? false;
 
   return (
     <article className="recipe-card">
@@ -27,24 +28,24 @@ function RecipeCard({ recipe }: Props) {
         className="recipe-card__favorite"
         onClick={(e) => {
           e.stopPropagation();
-          onToggleFavorite(recipe.id);
-        }}
-        aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
-      >
-        {isFavorited ? '♥' : '♡'}
-      </button>
-      <span
-        style={{
-          backgroundColor: categoryColors[recipe.category.toLocaleLowerCase()],
-        }}
-        className="recipe-card__category"
-      >
-        {recipe.category}
-      </span>
-      <h2 className="recipe-card__title">{recipe.title}</h2>
-      <p className="recipe-card__description">{recipe.description}</p>
-    </article>
-  );
-}
+          onToggleLike(recipe.id);
+          }}
+          aria-label={isLiked ? 'Remove from favorites' : 'Add to favorites'}
+        >
+          {isLiked ? '♥' : '♡'}
+        </button>
+        <span
+          style={{
+            backgroundColor: categoryColors[recipe.category.toLocaleLowerCase()],
+          }}
+          className="recipe-card__category"
+        >
+          {recipe.category}
+        </span>
+        <h2 className="recipe-card__title">{recipe.title}</h2>
+        <p className="recipe-card__description">{recipe.description}</p>
+      </article>
+    );
+  }
 
 export default RecipeCard;
