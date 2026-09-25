@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(node tests/lesson-08.js)"
-    ]
-  }
-}
